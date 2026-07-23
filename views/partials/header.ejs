@@ -1,0 +1,79 @@
+<header class="navbar navbar-expand-lg navbar-dark bg-dark-slate sticky-top shadow-sm py-2">
+  <div class="container-fluid px-4">
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center me-4" href="/">
+      <div class="brand-logo-container me-2">
+        <i class="bi bi-telephone-outbound-fill brand-icon"></i>
+      </div>
+      <span class="fw-bold tracking-tight text-white d-none d-sm-inline">Antigravity Call Manager</span>
+      <span class="fw-bold tracking-tight text-white d-inline d-sm-none">ACM</span>
+    </a>
+
+    <!-- Live Search (Middle) - Only shown on Dashboard -->
+    <% if (typeof title !== 'undefined' && title.includes('Dashboard')) { %>
+      <div class="navbar-search mx-auto d-flex align-items-center">
+        <div class="input-group">
+          <span class="input-group-text bg-search border-0 text-muted">
+            <i class="bi bi-search"></i>
+          </span>
+          <input 
+            type="text" 
+            id="live-search-input" 
+            class="form-control bg-search border-0 text-white" 
+            placeholder="Search by name, mobile, company..." 
+            value="<%= typeof search !== 'undefined' ? search : '' %>"
+            autocomplete="off"
+          >
+          <button class="btn btn-search-clear d-none" type="button" id="clear-search-btn">
+            <i class="bi bi-x-circle-fill"></i>
+          </button>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="navbar-search mx-auto d-flex align-items-center invisible"></div>
+    <% } %>
+
+    <!-- Right Side Actions & Clock -->
+    <div class="d-flex align-items-center gap-3 ms-auto ms-lg-0">
+      
+      <!-- Add Contact Button (Only shown on Dashboard) -->
+      <% if (typeof title !== 'undefined' && title.includes('Dashboard')) { %>
+        <button 
+          type="button" 
+          class="btn btn-outline-light btn-sm rounded-pill d-flex align-items-center gap-1.5 px-3"
+          data-bs-toggle="modal" 
+          data-bs-target="#addContactModal"
+        >
+          <i class="bi bi-person-plus-fill"></i>
+          <span>Add Contact</span>
+        </button>
+      <% } %>
+
+      <!-- Upload/Dashboard Navigation Button -->
+      <% if (typeof title !== 'undefined' && !title.includes('Import')) { %>
+        <a href="/upload" class="btn btn-outline-emerald btn-sm rounded-pill d-flex align-items-center gap-1.5 px-3">
+          <i class="bi bi-file-earmark-excel-fill"></i>
+          <span class="d-none d-md-inline">Upload Excel</span>
+        </a>
+      <% } else { %>
+        <a href="/" class="btn btn-outline-emerald btn-sm rounded-pill d-flex align-items-center gap-1.5 px-3">
+          <i class="bi bi-grid-fill"></i>
+          <span class="d-none d-md-inline">Dashboard</span>
+        </a>
+      <% } %>
+
+      <!-- Total Contacts Badge -->
+      <div class="badge-contacts d-flex align-items-center gap-1.5 px-3 py-1.5 bg-dark-light rounded-pill border border-slate-light">
+        <i class="bi bi-people-fill text-teal"></i>
+        <span class="text-xs text-muted-light d-none d-sm-inline">Contacts:</span>
+        <span id="header-contacts-badge" class="fw-bold text-white"><%= typeof totalOverallContacts !== 'undefined' ? totalOverallContacts : '0' %></span>
+      </div>
+
+      <!-- Current Date & Time (Live Clock) -->
+      <div class="d-none d-lg-flex flex-column align-items-end text-end clock-container bg-dark-light border border-slate-light px-3 py-1 rounded-3">
+        <span id="header-live-time" class="text-sm fw-bold text-white">00:00:00 AM</span>
+        <span id="header-live-date" class="text-xxs text-muted-light">Thursday, July 23, 2026</span>
+      </div>
+    </div>
+  </div>
+</header>

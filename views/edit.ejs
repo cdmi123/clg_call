@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  
+  <!-- Modern Typography (Inter font) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS assets (Served locally from node_modules and public) -->
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-body">
+
+  <!-- Sticky Header Partial -->
+  <%- include('partials/header') %>
+
+  <!-- Main Content Wrapper -->
+  <main class="container py-5 animate-fade-in">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        
+        <!-- Edit Card -->
+        <div class="card bg-card border border-slate-light rounded-4 shadow-sm overflow-hidden">
+          
+          <div class="card-header bg-light-blue border-bottom border-slate-light px-4 py-3.5 d-flex align-items-center gap-2">
+            <i class="bi bi-pencil-square text-primary-blue fs-4"></i>
+            <h4 class="h5 fw-bold mb-0 text-primary-dark">Edit Contact Details</h4>
+          </div>
+
+          <div class="card-body p-4 text-dark">
+            
+            <!-- Error Alert -->
+            <% if (typeof error !== 'undefined' && error) { %>
+              <div class="alert alert-danger d-flex align-items-start gap-2.5 rounded-3 py-3 px-4 mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5 mt-0.5 text-danger"></i>
+                <div>
+                  <h6 class="fw-bold mb-1 text-danger">Update Failed</h6>
+                  <p class="text-sm mb-0 text-danger"><%= error %></p>
+                </div>
+              </div>
+            <% } %>
+
+            <!-- Edit Contact Form -->
+            <form action="/contacts/edit/<%= contact._id %>" method="POST" class="needs-validation" novalidate>
+              
+              <!-- Form Fields -->
+              <div class="mb-3">
+                <label for="edit-name" class="form-label text-sm text-muted-dark fw-medium">Full Name <span class="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  name="name"
+                  id="edit-name" 
+                  class="form-control bg-light-input border-light-blue text-dark" 
+                  value="<%= contact.name %>"
+                  required 
+                  placeholder="Enter full name"
+                >
+                <div class="invalid-feedback">Please enter a name.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="edit-mobile" class="form-label text-sm text-muted-dark fw-medium">Mobile Number <span class="text-danger">*</span></label>
+                <input 
+                  type="tel" 
+                  name="mobile"
+                  id="edit-mobile" 
+                  class="form-control bg-light-input border-light-blue text-dark" 
+                  value="<%= contact.mobile %>"
+                  required 
+                  placeholder="Enter mobile number"
+                >
+                <div class="invalid-feedback">Please enter a valid mobile number.</div>
+                <div class="text-xxs text-muted mt-1">E.g., 9876543210</div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label for="edit-company" class="form-label text-sm text-muted-dark fw-medium">Company</label>
+                  <input 
+                    type="text" 
+                    name="company"
+                    id="edit-company" 
+                    class="form-control bg-light-input border-light-blue text-dark" 
+                    value="<%= contact.company %>"
+                    placeholder="Company name"
+                  >
+                </div>
+                <div class="col-6">
+                  <label for="edit-city" class="form-label text-sm text-muted-dark fw-medium">City</label>
+                  <input 
+                    type="text" 
+                    name="city"
+                    id="edit-city" 
+                    class="form-control bg-light-input border-light-blue text-dark" 
+                    value="<%= contact.city %>"
+                    placeholder="City name"
+                  >
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="edit-remark" class="form-label text-sm text-muted-dark fw-medium">Remark</label>
+                <textarea 
+                  name="remark"
+                  id="edit-remark" 
+                  class="form-control bg-light-input border-light-blue text-dark" 
+                  rows="3" 
+                  placeholder="Add notes about the contact..."
+                ><%= contact.remark %></textarea>
+              </div>
+
+              <!-- Read-only Metrics (Logs) -->
+              <div class="border-top border-light-blue pt-3 mb-4">
+                <h6 class="text-xs fw-bold text-muted-dark uppercase tracking-wider mb-2.5">Call Log Information</h6>
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="bg-light-blue-light border border-light-blue rounded-3 px-3 py-2 text-start">
+                      <div class="text-xxs text-muted">Calls Placed</div>
+                      <div class="fw-bold text-primary-dark fs-5 mt-0.5"><%= contact.callCount %></div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bg-light-blue-light border border-light-blue rounded-3 px-3 py-2 text-start">
+                      <div class="text-xxs text-muted">Last Call Date</div>
+                      <div class="fw-semibold text-primary-dark text-sm mt-1.5 text-truncate">
+                        <% if (contact.lastCallDate) { %>
+                          <%= new Date(contact.lastCallDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                        <% } else { %>
+                          Never
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-flex align-items-center justify-content-end gap-2">
+                <a href="/" class="btn btn-outline-slate rounded-pill px-4">Cancel</a>
+                <button type="submit" class="btn btn-primary-blue rounded-pill px-4 fw-bold">
+                  Save Changes
+                </button>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Enable Bootstrap Client-side Validation
+    (() => {
+      'use strict'
+      const forms = document.querySelectorAll('.needs-validation')
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })()
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error | Call Management System</title>
+  
+  <!-- Modern Typography (Inter font) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS assets (Served locally from node_modules and public) -->
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-body d-flex align-items-center justify-content-center min-vh-100">
+
+  <div class="container text-center">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-6">
+        <div class="card bg-card border border-danger border-opacity-25 rounded-4 shadow-lg p-5">
+          <div class="text-danger mb-4">
+            <i class="bi bi-exclamation-octagon display-1 text-danger"></i>
+          </div>
+          <h2 class="fw-bold text-dark mb-2">Something Went Wrong</h2>
+          <p class="text-muted-dark text-sm mb-4"><%= typeof message !== 'undefined' ? message : 'An unexpected application error has occurred.' %></p>
+          
+          <div class="d-flex justify-content-center gap-2">
+            <a href="/" class="btn btn-primary-blue rounded-pill px-4">
+              <i class="bi bi-arrow-left me-1.5"></i>Back to Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

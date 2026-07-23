@@ -1,0 +1,128 @@
+<div class="card bg-card border border-slate-light shadow-sm overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-dark-custom align-middle mb-0">
+      <thead>
+        <tr>
+          <th style="width: 80px;" class="ps-4">S.No.</th>
+          <th class="sortable cursor-pointer" data-sort="name">
+            <div class="d-flex align-items-center text-muted-dark">
+              Name
+              <% if (sort === 'name') { %>
+                <i class="bi bi-sort-alpha-<%= direction === 'asc' ? 'down' : 'up-alt' %> text-primary-blue ms-1.5 fs-7"></i>
+              <% } else { %>
+                <i class="bi bi-arrow-down-up text-muted ms-1.5 fs-8"></i>
+              <% } %>
+            </div>
+          </th>
+          <th style="width: 150px;" class="text-end pe-4 text-muted-dark">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (contacts && contacts.length > 0) { %>
+          <% contacts.forEach((contact, idx) => { %>
+            <tr 
+              id="contact-row-<%= contact._id %>" 
+              class="table-row-hover <%= contact.callCount > 0 ? 'called-row' : '' %>"
+            >
+              <td class="ps-4 fw-semibold text-muted-dark"><%= (page - 1) * limit + idx + 1 %></td>
+              <td>
+                <div class="fw-bold text-dark d-flex align-items-center gap-2">
+                  <span class="avatar-circle"><%= contact.name.charAt(0).toUpperCase() %></span>
+                  <span><%= contact.name %></span>
+                </div>
+              </td>
+              <td class="text-end pe-4">
+                <!-- Call Button -->
+                <button 
+                  type="button" 
+                  class="btn btn-primary-blue btn-sm rounded-pill btn-call px-4 d-inline-flex align-items-center gap-1.5" 
+                  data-id="<%= contact._id %>" 
+                  data-mobile="<%= contact.mobile %>"
+                >
+                  <i class="bi bi-telephone-fill text-white"></i>
+                  <span>Call</span>
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="3" class="text-center py-5 border-0">
+              <div class="empty-state py-4">
+                <i class="bi bi-people text-muted-dark display-4 d-block mb-3"></i>
+                <h5 class="text-dark fw-bold mb-1">No Contacts Found</h5>
+                <p class="text-muted-dark text-sm">No matches found for your search or your list is empty.</p>
+              </div>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Table Pagination and Page Size Selection Footer -->
+  <div class="card-footer bg-card border-top border-slate-light px-4 py-3 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+    <!-- Show records details -->
+    <div class="text-sm text-muted-dark">
+      <% if (totalContacts > 0) { %>
+        Showing <span class="fw-semibold text-dark"><%= (page - 1) * limit + 1 %></span> to 
+        <span class="fw-semibold text-dark"><%= Math.min(page * limit, totalContacts) %></span> of 
+        <span class="fw-semibold text-dark"><%= totalContacts %></span> records
+      <% } else { %>
+        Showing 0 records
+      <% } %>
+    </div>
+
+    <!-- Pagination & Limit Selector Controls -->
+    <div class="d-flex align-items-center gap-3">
+      <!-- Records per page dropdown -->
+      <div class="d-flex align-items-center gap-2">
+        <label for="page-size-selector" class="text-xs text-muted-dark text-nowrap mb-0">Per Page:</label>
+        <select id="page-size-selector" class="form-select form-select-sm bg-light border-slate-light text-dark rounded-pill px-2.5">
+          <option value="10" <%= limit === 10 ? 'selected' : '' %>>10</option>
+          <option value="25" <%= limit === 25 ? 'selected' : '' %>>25</option>
+          <option value="50" <%= limit === 50 ? 'selected' : '' %>>50</option>
+          <option value="100" <%= limit === 100 ? 'selected' : '' %>>100</option>
+        </select>
+      </div>
+
+      <!-- Page Numbers Nav -->
+      <% if (totalPages > 1) { %>
+        <nav aria-label="Page navigation" class="mb-0">
+          <ul class="pagination pagination-sm mb-0 gap-1">
+            <!-- Prev Button -->
+            <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+              <a class="page-link rounded-pill border-0 page-nav-btn" href="#" data-page="<%= page - 1 %>">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            </li>
+
+            <!-- Page numbers loops (Max 5 shown dynamically around current) -->
+            <% 
+              let startPage = Math.max(1, page - 2);
+              let endPage = Math.min(totalPages, page + 2);
+              if (page <= 3) {
+                endPage = Math.min(totalPages, 5);
+              }
+              if (page > totalPages - 2) {
+                startPage = Math.max(1, totalPages - 4);
+              }
+              for (let p = startPage; p <= endPage; p++) { 
+            %>
+              <li class="page-item <%= p === page ? 'active' : '' %>">
+                <a class="page-link rounded-pill border-0 page-nav-btn" href="#" data-page="<%= p %>"><%= p %></a>
+              </li>
+            <% } %>
+
+            <!-- Next Button -->
+            <li class="page-item <%= page === totalPages ? 'disabled' : '' %>">
+              <a class="page-link rounded-pill border-0 page-nav-btn" href="#" data-page="<%= page + 1 %>">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      <% } %>
+    </div>
+  </div>
+</div>

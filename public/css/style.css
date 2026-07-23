@@ -1,0 +1,427 @@
+/* ----------------------------------------------------
+   Call Management System - Professional Light Blue & White Theme
+   ---------------------------------------------------- */
+
+:root {
+  /* Color Palette Variables */
+  --bg-dark: #eff6ff;         /* Soft light-blue body background (blue-50) */
+  --bg-card: #ffffff;         /* Pure white for containers */
+  --bg-header: #1e40af;       /* Deep Navy Blue for header (blue-800) */
+  
+  --border-blue-light: #dbeafe; /* Light blue border (blue-100) */
+  --border-blue-medium: #bfdbfe; /* Medium blue border (blue-200) */
+  
+  --text-primary: #1e293b;    /* Dark slate text */
+  --text-dark-blue: #1e3b8b;  /* Corporate dark blue text */
+  --text-muted: #64748b;      /* Muted text (slate-500) */
+  --text-muted-dark: #475569;  /* Dark muted text (slate-600) */
+  
+  --primary-blue: #2563eb;       /* Royal Blue */
+  --primary-blue-hover: #1d4ed8; /* Darker blue */
+  --primary-blue-light: #3b82f6;
+  --blue-badge: rgba(37, 99, 235, 0.08); /* Soft blue highlight */
+  --slate-light: #94a3b8;                 /* Slate grey variable */
+  
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Base Body Setup */
+body.app-body {
+  font-family: var(--font-family-sans);
+  background-color: var(--bg-dark) !important;
+  color: var(--text-primary) !important;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  letter-spacing: -0.011em;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-blue-medium);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-blue-light);
+}
+
+/* Typography Utilities */
+.tracking-tight {
+  letter-spacing: -0.025em;
+}
+.text-xxs {
+  font-size: 0.65rem;
+}
+.text-xs {
+  font-size: 0.75rem;
+}
+.text-sm {
+  font-size: 0.85rem;
+}
+.text-xxs, .text-xs, .text-sm {
+  font-weight: 500;
+}
+.text-muted-dark {
+  color: var(--text-muted-dark) !important;
+}
+.text-primary-dark {
+  color: var(--text-dark-blue) !important;
+}
+
+/* Containers & Cards */
+.bg-card {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-blue-light) !important;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.04) !important;
+}
+.bg-light-blue-light {
+  background-color: #eff6ff !important;
+}
+.bg-light-blue {
+  background-color: #f0f7ff !important;
+}
+.border-slate-light {
+  border-color: var(--border-blue-light) !important;
+}
+.border-light-blue {
+  border-color: var(--border-blue-light) !important;
+}
+
+/* Sticky Header Styles (Professional Navy Blue background with white components) */
+header.navbar {
+  background-color: var(--bg-header) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.navbar-search {
+  max-width: 420px;
+  width: 100%;
+}
+.bg-search {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px;
+}
+.bg-search:focus-within {
+  border-color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+}
+.bg-search input {
+  color: #ffffff !important;
+}
+.bg-search input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.btn-search-clear {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.375rem 0.75rem;
+  transition: var(--transition-smooth);
+}
+.btn-search-clear:hover {
+  color: #ffffff;
+}
+
+/* Brand Logo inside Header */
+.brand-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.brand-icon {
+  font-size: 14px;
+  color: var(--bg-header);
+}
+
+/* Header Info Badges & Clock */
+.badge-contacts {
+  font-size: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+.badge-contacts span, .badge-contacts i {
+  color: #ffffff !important;
+}
+.clock-container {
+  min-width: 155px;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+.clock-container span {
+  color: #ffffff !important;
+}
+.clock-container #header-live-date {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Custom Buttons styling */
+.btn-primary-blue {
+  background-color: var(--primary-blue) !important;
+  border-color: var(--primary-blue) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+}
+.btn-primary-blue:hover, .btn-primary-blue:focus {
+  background-color: var(--primary-blue-hover) !important;
+  border-color: var(--primary-blue-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+.btn-primary-blue:active {
+  transform: translateY(0);
+}
+
+.btn-emerald {
+  background-color: var(--primary-blue) !important;
+  border-color: var(--primary-blue) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+}
+.btn-emerald:hover, .btn-emerald:focus {
+  background-color: var(--primary-blue-hover) !important;
+  border-color: var(--primary-blue-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-outline-emerald {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  font-weight: 500;
+  transition: var(--transition-smooth);
+}
+.btn-outline-emerald:hover {
+  background-color: #ffffff !important;
+  color: var(--bg-header) !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+.btn-outline-slate {
+  color: var(--text-muted-dark) !important;
+  border-color: var(--border-blue-medium) !important;
+  font-weight: 500;
+  background-color: #ffffff;
+  transition: var(--transition-smooth);
+}
+.btn-outline-slate:hover {
+  background-color: var(--bg-dark) !important;
+  color: var(--text-dark-blue) !important;
+  border-color: var(--primary-blue-light) !important;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+/* Custom Table Styles */
+.table-dark-custom {
+  background-color: var(--bg-card) !important;
+  border-collapse: collapse;
+}
+.table-dark-custom th {
+  background-color: #f1f5f9 !important; /* Soft grey background for table headers */
+  color: var(--text-muted-dark);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid var(--border-blue-light) !important;
+}
+.table-dark-custom td {
+  padding: 0.95rem 0.75rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-blue-light) !important;
+}
+.table-row-hover {
+  transition: var(--transition-smooth);
+}
+.table-row-hover:hover {
+  background-color: #f0f7ff !important; /* Soft blue row hover */
+}
+
+/* Custom avatar letters */
+.avatar-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #dbeafe; /* Light blue */
+  color: var(--primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1px solid var(--border-blue-medium);
+}
+
+.table-row-hover:hover .avatar-circle {
+  background: var(--primary-blue);
+  color: #fff;
+  border-color: var(--primary-blue);
+}
+
+/* Sorting column headers */
+.sortable:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Called Row styling (Visually changes colors for contacts already called) */
+.called-row {
+  background-color: #e0f2fe !important; /* Soft sky blue called row (sky-100) */
+  border-left: 4px solid var(--primary-blue) !important;
+}
+.called-row td {
+  color: var(--text-dark-blue) !important;
+  font-weight: 500;
+}
+.called-row .avatar-circle {
+  background: var(--primary-blue) !important;
+  color: #ffffff !important;
+  border-color: var(--primary-blue) !important;
+}
+.called-row .btn-call {
+  background-color: var(--slate-light) !important;
+  border-color: var(--slate-light) !important;
+  color: #ffffff !important;
+  opacity: 0.9 !important;
+}
+.called-row .btn-call i {
+  color: #ffffff !important;
+}
+
+/* Pagination Links */
+.page-link {
+  background-color: var(--bg-card) !important;
+  color: var(--text-muted-dark) !important;
+  border: 1px solid var(--border-blue-light) !important;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  transition: var(--transition-smooth);
+}
+.page-link:hover {
+  background-color: var(--bg-dark) !important;
+  color: var(--text-dark-blue) !important;
+}
+.page-item.active .page-link {
+  background-color: var(--primary-blue) !important;
+  border-color: var(--primary-blue) !important;
+  color: #ffffff !important;
+}
+.page-item.disabled .page-link {
+  background-color: var(--bg-card) !important;
+  color: var(--text-muted) !important;
+  opacity: 0.4;
+}
+
+/* Forms UI styling */
+.form-control, .form-select {
+  background-color: #ffffff !important;
+  border: 1px solid var(--border-blue-medium) !important;
+  color: var(--text-primary) !important;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+  transition: var(--transition-smooth);
+}
+.form-control:focus, .form-select:focus {
+  background-color: #ffffff !important;
+  color: var(--text-primary) !important;
+  border-color: var(--primary-blue) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  outline: 0;
+}
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+.bg-light-input {
+  background-color: #ffffff !important;
+}
+
+/* Excel File Upload Area Style */
+.upload-drop-zone {
+  border-color: var(--border-blue-medium) !important;
+  background-color: #ffffff;
+  transition: var(--transition-smooth);
+}
+.upload-drop-zone.dragover {
+  border-color: var(--primary-blue) !important;
+  background-color: rgba(37, 99, 235, 0.05);
+  transform: scale(0.995);
+}
+.upload-drop-zone:hover {
+  border-color: var(--primary-blue-light) !important;
+}
+.upload-icon-container {
+  color: var(--slate-light);
+  transition: var(--transition-smooth);
+}
+.upload-drop-zone.dragover .upload-icon-container {
+  color: var(--primary-blue);
+  transform: translateY(-3px);
+}
+
+/* Progress bar styling */
+.progress.bg-light {
+  background-color: #e2e8f0 !important;
+}
+
+/* Modal configurations */
+.modal-content {
+  background-color: #ffffff !important;
+  color: var(--text-primary) !important;
+  border: 0;
+  box-shadow: 0 10px 40px rgba(30, 41, 59, 0.12) !important;
+}
+.modal-header, .modal-footer {
+  border-color: var(--border-blue-light) !important;
+}
+
+/* Animations system */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+.animate-scale-up {
+  animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar-search {
+    max-width: 100%;
+    order: 4;
+    margin-top: 0.75rem;
+  }
+}

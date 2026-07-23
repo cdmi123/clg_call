@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  
+  <!-- Modern Typography (Inter font) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS assets (Served locally from node_modules and public) -->
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-body">
+
+  <!-- Sticky Header Partial -->
+  <%- include('partials/header') %>
+
+  <!-- Main Content Wrapper -->
+  <main class="container py-5 animate-fade-in">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        
+        <!-- Upload Card -->
+        <div class="card bg-card border border-slate-light rounded-4 shadow-sm overflow-hidden">
+          
+          <div class="card-header bg-light-blue border-bottom border-slate-light px-4 py-3.5 d-flex align-items-center gap-2">
+            <i class="bi bi-file-earmark-excel text-primary-blue fs-4"></i>
+            <h4 class="h5 fw-bold mb-0 text-primary-dark">Import Contacts from Excel</h4>
+          </div>
+
+          <div class="card-body p-4 text-dark">
+            
+            <!-- 1. Display Errors -->
+            <% if (error) { %>
+              <div class="alert alert-danger d-flex align-items-start gap-2.5 rounded-3 py-3 px-4 mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5 mt-0.5 text-danger"></i>
+                <div>
+                  <h6 class="fw-bold mb-1 text-danger">Import Failed</h6>
+                  <p class="text-sm mb-0 text-danger"><%= error %></p>
+                </div>
+              </div>
+            <% } %>
+
+            <!-- 2. Display Import Success & Summary -->
+            <% if (summary) { %>
+              <div class="text-center py-3">
+                <div class="success-check-icon mb-3 animate-scale-up">
+                  <i class="bi bi-check-circle-fill text-primary-blue display-3"></i>
+                </div>
+                <h4 class="fw-bold text-primary-dark mb-2">Excel Import Completed!</h4>
+                <p class="text-muted-dark text-sm mb-4">Your Excel file has been successfully processed and contacts are updated.</p>
+
+                <!-- Summary Details Table -->
+                <div class="summary-table-container border border-light-blue rounded-3 bg-light-blue-light p-3 mb-4 text-start">
+                  <h6 class="text-xs fw-bold text-primary-dark uppercase tracking-wider mb-2.5">Import Statistics</h6>
+                  
+                  <div class="d-flex justify-content-between py-2 border-bottom border-light text-sm">
+                    <span class="text-muted-dark">Total Rows Processed:</span>
+                    <span class="fw-bold text-primary-dark"><%= summary.totalRowsProcessed %></span>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom border-light text-sm">
+                    <span class="text-muted-dark text-primary-blue">Successfully Imported:</span>
+                    <span class="fw-bold text-primary-blue"><%= summary.importedCount %></span>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom border-light text-sm">
+                    <span class="text-muted-dark text-warning-dark">Duplicate Numbers Ignored:</span>
+                    <span class="fw-bold text-warning-dark"><%= summary.skippedDuplicates %></span>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 text-sm">
+                    <span class="text-muted-dark text-danger-dark">Invalid Rows Skipped:</span>
+                    <span class="fw-bold text-danger-dark"><%= summary.invalidRowsCount %></span>
+                  </div>
+                </div>
+
+                <!-- Automatic Redirect Notice -->
+                <div class="d-flex align-items-center justify-content-center gap-2 text-sm text-primary-blue">
+                  <div class="spinner-border spinner-border-sm" role="status"></div>
+                  <span>Redirecting to Dashboard in <strong id="countdown-timer">5</strong> seconds...</span>
+                </div>
+                
+                <div class="mt-4">
+                  <a href="/" class="btn btn-primary-blue rounded-pill px-4">Go to Dashboard Now</a>
+                </div>
+              </div>
+
+              <!-- Redirect JS script block -->
+              <script>
+                let seconds = 5;
+                const timerSpan = document.getElementById('countdown-timer');
+                const interval = setInterval(() => {
+                  seconds--;
+                  timerSpan.textContent = seconds;
+                  if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.href = '/';
+                  }
+                }, 1000);
+              </script>
+
+            <% } else { %>
+              
+              <!-- 3. Display Form Upload -->
+              <form action="/upload" method="POST" enctype="multipart/form-data" id="excel-upload-form">
+                
+                <!-- Drag and Drop Zone -->
+                <div id="drop-zone" class="upload-drop-zone d-flex flex-column align-items-center justify-content-center p-5 border-2 border-dashed rounded-4 cursor-pointer text-center">
+                  <input type="file" name="excelFile" id="excel-file-input" class="d-none" accept=".xlsx, .xls">
+                  
+                  <div class="upload-icon-container mb-3 text-muted">
+                    <i class="bi bi-cloud-arrow-up-fill display-4"></i>
+                  </div>
+                  
+                  <h5 class="fw-bold text-primary-dark mb-1">Drag & Drop Excel File</h5>
+                  <p class="text-muted text-sm mb-3">Accepts only .xlsx and .xls files</p>
+                  
+                  <button type="button" class="btn btn-outline-slate rounded-pill px-4 text-xs font-semibold btn-browse">
+                    Browse Files
+                  </button>
+                </div>
+
+                <!-- Selected File Display Details -->
+                <div id="selected-file-details" class="d-none mt-3 p-3 bg-light-blue-light border border-light-blue rounded-3 align-items-center justify-content-between">
+                  <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                    <i class="bi bi-file-earmark-spreadsheet-fill text-primary-blue fs-4"></i>
+                    <div class="text-start overflow-hidden">
+                      <div id="selected-file-name" class="fw-bold text-primary-dark text-sm text-truncate">file-name.xlsx</div>
+                      <div id="selected-file-size" class="text-xs text-muted">0 KB</div>
+                    </div>
+                  </div>
+                  <button type="button" id="remove-file-btn" class="btn btn-outline-danger btn-sm btn-icon rounded-circle">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+
+                <!-- Excel Formatting Instructions -->
+                <div class="mt-4 border-top border-light-blue pt-3 text-start">
+                  <h6 class="text-xs fw-bold text-muted-dark uppercase tracking-wider mb-2">Excel Template Rules</h6>
+                  <ul class="text-muted-dark text-xs ps-3 mb-0">
+                    <li class="mb-1"><span class="text-primary-dark fw-medium">Required columns:</span> <strong>Name</strong> and <strong>Mobile Number</strong> (headers must be in the first row).</li>
+                    <li class="mb-1"><span class="text-primary-dark fw-medium">Optional columns:</span> <strong>Company</strong>, <strong>City</strong>, and <strong>Remark</strong>.</li>
+                    <li>Duplicates of existing mobile numbers will be skipped automatically during validation.</li>
+                  </ul>
+                </div>
+
+                <!-- Progress Bar container (shown upon form submit) -->
+                <div id="upload-progress-container" class="d-none mt-4">
+                  <div class="d-flex justify-content-between mb-1.5 text-xs text-muted-dark">
+                    <span id="progress-status-text" class="fw-medium">Uploading & parsing file...</span>
+                    <span id="progress-percent" class="fw-bold text-primary-dark">0%</span>
+                  </div>
+                  <div class="progress bg-light" style="height: 6px;">
+                    <div id="upload-progress-bar" class="progress-bar bg-primary-blue progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                  </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="mt-4">
+                  <button type="submit" id="submit-upload-btn" class="btn btn-primary-blue w-100 rounded-pill py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2" disabled>
+                    <i class="bi bi-upload"></i>
+                    <span>Import Contacts</span>
+                  </button>
+                </div>
+
+              </form>
+
+            <% } %>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/main.js"></script>
+
+</body>
+</html>
