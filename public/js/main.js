@@ -258,16 +258,11 @@ function initContactActions() {
       const nextId = nextContactToCallId;
       nextContactToCallId = null; // Clear to prevent infinite triggers
 
-      // Show warning/toast notification with action details
-      showToast('Auto-Next Dialer', 'Initiating call for the next contact in 2 seconds...', 'bi-telephone-fill text-emerald');
-
-      setTimeout(() => {
-        // Find the call button in the DOM and click it
-        const nextCallBtn = document.querySelector(`.btn-call[data-id="${nextId}"]`);
-        if (nextCallBtn) {
-          nextCallBtn.click();
-        }
-      }, 2000);
+      // Find the call button in the DOM and click it immediately
+      const nextCallBtn = document.querySelector(`.btn-call[data-id="${nextId}"]`);
+      if (nextCallBtn) {
+        nextCallBtn.click();
+      }
     }
   });
   const deleteModal = deleteModalEl ? new bootstrap.Modal(deleteModalEl) : null;
