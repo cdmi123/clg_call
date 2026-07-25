@@ -13,6 +13,7 @@ let currentFaculty = '';
 let deleteModeActive = false;
 let autoNextActive = false;
 let nextContactToCallId = null;
+let nextContactToCallName = '';
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize Real-Time Clock
@@ -213,6 +214,11 @@ async function fetchTableData() {
         autoNextCheckbox.checked = autoNextActive;
       }
       
+      // Hide banner and clear target on table refresh/change
+      hideFloatingCallBanner();
+      nextContactToCallId = null;
+      nextContactToCallName = '';
+      
       // Update contact badge counter in header
       const badge = document.getElementById('header-contacts-badge');
       if (badge) badge.textContent = data.totalOverallContacts;
@@ -250,15 +256,28 @@ function initContactActions() {
     if (!autoNextCheckbox) return;
 
     autoNextActive = autoNextCheckbox.checked;
+    if (!autoNextActive) {
+      hideFloatingCallBanner();
+      nextContactToCallId = null;
+      nextContactToCallName = '';
+    }
   });
 
   // Auto-Dial Next Number when window regains focus (e.g. user returns from phone dialer)
   window.addEventListener('focus', () => {
     if (autoNextActive && nextContactToCallId) {
-      const nextId = nextContactToCallId;
-      nextContactToCallId = null; // Clear to prevent infinite triggers
+      showFloatingCallBanner(nextContactToCallName);
+    }
+  });
 
-      // Find the call button in the DOM and click it immediately
+  // Floating Call Button Click Handler
+  const floatingCallBtn = document.getElementById('floating-call-btn');
+  floatingCallBtn?.addEventListener('click', () => {
+    if (nextContactToCallId) {
+      const nextId = nextContactToCallId;
+      hideFloatingCallBanner();
+      nextContactToCallId = null; // Clear to prevent infinite loops
+      
       const nextCallBtn = document.querySelector(`.btn-call[data-id="${nextId}"]`);
       if (nextCallBtn) {
         nextCallBtn.click();
@@ -274,6 +293,8 @@ function initContactActions() {
     const callBtn = e.target.closest('.btn-call');
     if (!callBtn) return;
     
+    hideFloatingCallBanner();
+
     const contactId = callBtn.dataset.id;
     const mobile = callBtn.dataset.mobile;
     const originalContent = callBtn.innerHTML;
@@ -304,11 +325,15 @@ function initContactActions() {
               const nextCallBtn = nextRow.querySelector('.btn-call');
               if (nextCallBtn) {
                 nextContactToCallId = nextCallBtn.dataset.id;
+                const nameDiv = nextRow.querySelector('.fw-bold.text-dark div > div');
+                nextContactToCallName = nameDiv ? nameDiv.textContent.trim() : 'Next Contact';
               } else {
                 nextContactToCallId = null;
+                nextContactToCallName = '';
               }
             } else {
               nextContactToCallId = null;
+              nextContactToCallName = '';
             }
           }
         }
@@ -664,4 +689,25 @@ function toggleDeleteButtons(show) {
       btn.classList.add('d-none');
     }
   });
+}
+
+/**
+ * Show/Hide floating call banner at bottom
+ */
+function showFloatingCallBanner(name) {
+  const banner = document.getElementById('floating-call-banner');
+  const nameSpan = document.getElementById('floating-next-contact-name');
+  if (banner && nameSpan) {
+    nameSpan.textContent = name;
+    banner.classList.remove('d-none');
+    banner.classList.add('d-block');
+  }
+}
+
+function hideFloatingCallBanner() {
+  const banner = document.getElementById('floating-call-banner');
+  if (banner) {
+    banner.classList.add('d-none');
+    banner.classList.remove('d-block');
+  }
 }
