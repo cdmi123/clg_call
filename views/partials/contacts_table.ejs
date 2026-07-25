@@ -12,7 +12,7 @@
         <label for="faculty-filter-selector" class="text-sm text-muted-dark text-nowrap mb-0">
           <i class="bi bi-person-fill text-primary-blue me-1"></i>Faculty:
         </label>
-        <select id="faculty-filter-selector" class="form-select form-select-sm bg-light border-slate-light text-dark rounded-pill px-3" style="min-width: 200px;">
+        <select id="faculty-filter-selector" class="form-select form-select-sm bg-light border-slate-light text-dark rounded-pill px-3" style="min-width: 170px;">
           <option value="" <%= !selectedFaculty ? 'selected' : '' %>>All Faculties</option>
           <option value="RAVI JASOLIYA" <%= selectedFaculty === 'RAVI JASOLIYA' ? 'selected' : '' %>>RAVI JASOLIYA</option>
           <option value="RIDHAM KEVADIYA" <%= selectedFaculty === 'RIDHAM KEVADIYA' ? 'selected' : '' %>>RIDHAM KEVADIYA</option>
@@ -21,6 +21,14 @@
           <option value="RAJNI SHINGALA" <%= selectedFaculty === 'RAJNI SHINGALA' ? 'selected' : '' %>>RAJNI SHINGALA</option>
           <option value="Unassigned" <%= selectedFaculty === 'Unassigned' ? 'selected' : '' %>>Unassigned / None</option>
         </select>
+      </div>
+
+      <!-- Delete Switch/Checkbox next to Faculty Dropdown -->
+      <div class="form-check form-switch mb-0 d-flex align-items-center gap-1.5 px-0">
+        <input class="form-check-input cursor-pointer ms-0" type="checkbox" role="switch" id="show-delete-checkbox" style="cursor: pointer; width: 1.8em; height: 0.95em; margin-top: 0;">
+        <label class="form-check-label text-xs text-muted-dark fw-bold cursor-pointer text-nowrap" for="show-delete-checkbox">
+          Delete Mode
+        </label>
       </div>
 
       <!-- Excel File Filter Dropdown -->
@@ -90,7 +98,7 @@
                 </div>
               </td>
               <td class="text-end pe-4">
-                <div class="d-inline-flex gap-1.5 align-items-center justify-content-end">
+                <div class="d-inline-flex gap-2 align-items-center justify-content-end">
                   <!-- Call Button -->
                   <button 
                     type="button" 
@@ -101,10 +109,10 @@
                     <i class="bi bi-telephone-fill text-white"></i>
                     <span>Call</span>
                   </button>
-                  <!-- Delete Button -->
+                  <!-- Delete Button (Hidden by default, shown via Delete Mode) -->
                   <button 
                     type="button" 
-                    class="btn btn-outline-danger btn-sm rounded-circle btn-icon btn-delete" 
+                    class="btn btn-outline-danger btn-sm rounded-circle btn-icon btn-delete d-none" 
                     data-id="<%= contact._id %>" 
                     data-name="<%= contact.name %>"
                     title="Delete Contact"

@@ -287,6 +287,19 @@ header.navbar {
   background-color: #e2e8f0 !important;
 }
 
+/* Call Button Green Styling */
+.btn-call {
+  background-color: #10b981 !important; /* Emerald Green */
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+  transition: var(--transition-smooth);
+}
+.btn-call:hover, .btn-call:focus {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important;
+}
+
 /* Called Row styling (Visually changes colors for contacts already called) */
 .called-row {
   background-color: #e0f2fe !important; /* Soft sky blue called row (sky-100) */
@@ -423,5 +436,95 @@ header.navbar {
     max-width: 100%;
     order: 4;
     margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Main wrapper and header padding reduction */
+  main.container-fluid {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    padding-top: 0.75rem !important;
+  }
+  header.navbar .container-fluid {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  /* Header badges size optimization */
+  .badge-contacts, .btn-outline-light, .btn-outline-emerald {
+    padding: 0.35rem 0.6rem !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* Table cells padding and font-size */
+  .table-dark-custom td {
+    padding: 0.6rem 0.35rem !important;
+    font-size: 0.8rem !important;
+  }
+  .table-dark-custom th {
+    padding: 0.6rem 0.35rem !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* S.No. and Action column width constraints */
+  .table-dark-custom th:first-child,
+  .table-dark-custom td:first-child {
+    padding-left: 0.5rem !important;
+    width: 45px !important;
+  }
+  .table-dark-custom th:last-child,
+  .table-dark-custom td:last-child {
+    padding-right: 0.5rem !important;
+    width: 110px !important;
+  }
+  .table-dark-custom td:last-child .d-inline-flex {
+    gap: 12px !important;
+  }
+
+  /* Avatar size */
+  .avatar-circle {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* Make Call Button a compact circle on mobile */
+  .btn-call span {
+    display: none !important;
+  }
+  .btn-call {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* card header padding and element sizing */
+  .card-header {
+    padding: 0.75rem 0.5rem !important;
+  }
+  .card-header h5 {
+    font-size: 0.95rem !important;
+  }
+  .card-header label {
+    font-size: 0.7rem !important;
+  }
+  .card-header select {
+    font-size: 0.75rem !important;
+    padding: 0.35rem 0.5rem !important;
+    min-width: 130px !important;
+  }
+  #delete-all-btn {
+    font-size: 0.75rem !important;
+    padding: 0.35rem 0.6rem !important;
+  }
+  
+  /* Prevent horizontal scrolling on container */
+  .table-responsive {
+    overflow-x: hidden;
   }
 }

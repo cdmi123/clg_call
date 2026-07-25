@@ -10,6 +10,7 @@ let currentPage = 1;
 let currentLimit = 10;
 let currentExcelFile = '';
 let currentFaculty = '';
+let deleteModeActive = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize Real-Time Clock
@@ -197,6 +198,13 @@ async function fetchTableData() {
       // Patch HTML fragment
       tableContainer.innerHTML = data.html;
       
+      // Restore delete mode switch state
+      const deleteCheckbox = document.getElementById('show-delete-checkbox');
+      if (deleteCheckbox) {
+        deleteCheckbox.checked = deleteModeActive;
+      }
+      toggleDeleteButtons(deleteModeActive);
+      
       // Update contact badge counter in header
       const badge = document.getElementById('header-contacts-badge');
       if (badge) badge.textContent = data.totalOverallContacts;
@@ -218,6 +226,15 @@ async function fetchTableData() {
 function initContactActions() {
   let selectedContactIdToDelete = null;
   const deleteModalEl = document.getElementById('deleteContactModal');
+
+  // Toggle Delete Mode checkbox state listener
+  document.addEventListener('change', (e) => {
+    const deleteCheckbox = e.target.closest('#show-delete-checkbox');
+    if (!deleteCheckbox) return;
+
+    deleteModeActive = deleteCheckbox.checked;
+    toggleDeleteButtons(deleteModeActive);
+  });
   const deleteModal = deleteModalEl ? new bootstrap.Modal(deleteModalEl) : null;
 
   // --- EVENT DELEGATION FOR ROW BUTTONS ---
@@ -588,4 +605,18 @@ function showToast(title, message, iconClass = 'bi-info-circle-fill text-emerald
 
   const toast = new bootstrap.Toast(toastEl);
   toast.show();
+}
+
+/**
+ * Toggle visibility of all delete buttons based on active mode state
+ */
+function toggleDeleteButtons(show) {
+  const deleteButtons = document.querySelectorAll('.btn-delete');
+  deleteButtons.forEach(btn => {
+    if (show) {
+      btn.classList.remove('d-none');
+    } else {
+      btn.classList.add('d-none');
+    }
+  });
 }
