@@ -11,6 +11,8 @@ let currentLimit = 10;
 let currentExcelFile = '';
 let currentFaculty = '';
 let deleteModeActive = false;
+let autoNextActive = false;
+let nextContactToCallId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize Real-Time Clock
@@ -205,6 +207,12 @@ async function fetchTableData() {
       }
       toggleDeleteButtons(deleteModeActive);
       
+      // Restore auto-next switch state
+      const autoNextCheckbox = document.getElementById('auto-next-checkbox');
+      if (autoNextCheckbox) {
+        autoNextCheckbox.checked = autoNextActive;
+      }
+      
       // Update contact badge counter in header
       const badge = document.getElementById('header-contacts-badge');
       if (badge) badge.textContent = data.totalOverallContacts;
@@ -234,6 +242,33 @@ function initContactActions() {
 
     deleteModeActive = deleteCheckbox.checked;
     toggleDeleteButtons(deleteModeActive);
+  });
+
+  // Toggle Auto-Next Mode checkbox state listener
+  document.addEventListener('change', (e) => {
+    const autoNextCheckbox = e.target.closest('#auto-next-checkbox');
+    if (!autoNextCheckbox) return;
+
+    autoNextActive = autoNextCheckbox.checked;
+  });
+
+  // Auto-Dial Next Number when window regains focus (e.g. user returns from phone dialer)
+  window.addEventListener('focus', () => {
+    if (autoNextActive && nextContactToCallId) {
+      const nextId = nextContactToCallId;
+      nextContactToCallId = null; // Clear to prevent infinite triggers
+
+      // Show warning/toast notification with action details
+      showToast('Auto-Next Dialer', 'Initiating call for the next contact in 2 seconds...', 'bi-telephone-fill text-emerald');
+
+      setTimeout(() => {
+        // Find the call button in the DOM and click it
+        const nextCallBtn = document.querySelector(`.btn-call[data-id="${nextId}"]`);
+        if (nextCallBtn) {
+          nextCallBtn.click();
+        }
+      }, 2000);
+    }
   });
   const deleteModal = deleteModalEl ? new bootstrap.Modal(deleteModalEl) : null;
 
@@ -266,6 +301,21 @@ function initContactActions() {
         const row = document.getElementById(`contact-row-${contactId}`);
         if (row) {
           row.classList.add('called-row');
+          
+          // If Auto-Next is active, determine the next contact's ID from the table rows
+          if (autoNextActive) {
+            const nextRow = row.nextElementSibling;
+            if (nextRow) {
+              const nextCallBtn = nextRow.querySelector('.btn-call');
+              if (nextCallBtn) {
+                nextContactToCallId = nextCallBtn.dataset.id;
+              } else {
+                nextContactToCallId = null;
+              }
+            } else {
+              nextContactToCallId = null;
+            }
+          }
         }
         
         showToast('Call Initiated', `Opening dialer for contact. Calling: ${mobile}`, 'bi-telephone-fill text-emerald');
