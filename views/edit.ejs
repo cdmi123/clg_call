@@ -104,6 +104,18 @@
                 </div>
               </div>
 
+              <div class="mb-3">
+                <label for="edit-faculty" class="form-label text-sm text-muted-dark fw-medium">Faculty Name</label>
+                <select name="facultyName" id="edit-faculty" class="form-select bg-light-input border-light-blue text-dark">
+                  <option value="" <%= !contact.facultyName ? 'selected' : '' %>>-- No Faculty Assigned --</option>
+                  <option value="RAVI JASOLIYA" <%= contact.facultyName === 'RAVI JASOLIYA' ? 'selected' : '' %>>RAVI JASOLIYA</option>
+                  <option value="RIDHAM KEVADIYA" <%= contact.facultyName === 'RIDHAM KEVADIYA' ? 'selected' : '' %>>RIDHAM KEVADIYA</option>
+                  <option value="CHIRAG MANGUKIYA" <%= contact.facultyName === 'CHIRAG MANGUKIYA' ? 'selected' : '' %>>CHIRAG MANGUKIYA</option>
+                  <option value="ABHI AANKOLIYA" <%= contact.facultyName === 'ABHI AANKOLIYA' ? 'selected' : '' %>>ABHI AANKOLIYA</option>
+                  <option value="RAJNI SHINGALA" <%= contact.facultyName === 'RAJNI SHINGALA' ? 'selected' : '' %>>RAJNI SHINGALA</option>
+                </select>
+              </div>
+
               <div class="mb-4">
                 <label for="edit-remark" class="form-label text-sm text-muted-dark fw-medium">Remark</label>
                 <textarea 
@@ -115,9 +127,22 @@
                 ><%= contact.remark %></textarea>
               </div>
 
-              <!-- Read-only Metrics (Logs) -->
+              <!-- Read-only Metrics (Logs & Source) -->
               <div class="border-top border-light-blue pt-3 mb-4">
-                <h6 class="text-xs fw-bold text-muted-dark uppercase tracking-wider mb-2.5">Call Log Information</h6>
+                <h6 class="text-xs fw-bold text-muted-dark uppercase tracking-wider mb-2.5">Contact Source & Logs</h6>
+                
+                <div class="mb-3">
+                  <div class="bg-light-blue border border-light-blue rounded-3 px-3 py-2.5 text-start">
+                    <div class="text-xxs text-muted d-flex align-items-center gap-1">
+                      <i class="bi bi-file-earmark-excel-fill text-success"></i>
+                      <span>Imported Source (Excel File)</span>
+                    </div>
+                    <div class="fw-bold text-primary-dark text-sm mt-1">
+                      <%= contact.excelFileName || 'Manually Added' %>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="row g-2">
                   <div class="col-6">
                     <div class="bg-light-blue-light border border-light-blue rounded-3 px-3 py-2 text-start">

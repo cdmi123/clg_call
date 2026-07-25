@@ -48,6 +48,7 @@ router.post('/contacts/add', contactController.addContact);
 router.get('/contacts/edit/:id', contactController.renderEdit);
 router.post('/contacts/edit/:id', contactController.updateContact);
 router.post('/contacts/delete/:id', contactController.deleteContact);
+router.post('/contacts/delete-all', contactController.deleteAllContacts);
 
 // API Endpoints for AJAX interactions
 router.post('/api/contacts/:id/call', contactController.apiRecordCall);

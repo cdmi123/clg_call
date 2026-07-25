@@ -4,10 +4,12 @@
 
 // Keep track of current table states (for AJAX search/sort/pagination)
 let currentSearch = '';
-let currentSort = 'name';
+let currentSort = 'createdAt';
 let currentDirection = 'asc';
 let currentPage = 1;
 let currentLimit = 10;
+let currentExcelFile = '';
+let currentFaculty = '';
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize Real-Time Clock
@@ -62,10 +64,12 @@ function initTableControls() {
   // Read initial states from query parameters or defaults
   const params = new URLSearchParams(window.location.search);
   currentSearch = params.get('search') || '';
-  currentSort = params.get('sort') || 'name';
+  currentSort = params.get('sort') || 'createdAt';
   currentDirection = params.get('direction') || 'asc';
   currentPage = parseInt(params.get('page')) || 1;
   currentLimit = parseInt(params.get('limit')) || 10;
+  currentExcelFile = params.get('excelFile') || '';
+  currentFaculty = params.get('facultyName') || '';
 
   // Debounced Live Search Input handler
   const searchInput = document.getElementById('live-search-input');
@@ -141,6 +145,26 @@ function initTableControls() {
     currentPage = 1; // Reset page
     fetchTableData();
   });
+
+  // Excel File Selector Change Handler
+  document.addEventListener('change', (e) => {
+    const excelSelect = e.target.closest('#excel-filter-selector');
+    if (!excelSelect) return;
+    
+    currentExcelFile = excelSelect.value;
+    currentPage = 1; // Reset page
+    fetchTableData();
+  });
+
+  // Faculty Selector Change Handler
+  document.addEventListener('change', (e) => {
+    const facultySelect = e.target.closest('#faculty-filter-selector');
+    if (!facultySelect) return;
+    
+    currentFaculty = facultySelect.value;
+    currentPage = 1; // Reset page
+    fetchTableData();
+  });
 }
 
 /**
@@ -159,6 +183,8 @@ async function fetchTableData() {
     direction: currentDirection,
     page: currentPage,
     limit: currentLimit,
+    excelFile: currentExcelFile,
+    facultyName: currentFaculty,
     ajax: 'true'
   });
 
@@ -176,7 +202,7 @@ async function fetchTableData() {
       if (badge) badge.textContent = data.totalOverallContacts;
 
       // Update URL parameters silently for shareable bookmarks
-      const cleanUrl = `${window.location.origin}${window.location.pathname}?search=${encodeURIComponent(currentSearch)}&sort=${currentSort}&direction=${currentDirection}&page=${currentPage}&limit=${currentLimit}`;
+      const cleanUrl = `${window.location.origin}${window.location.pathname}?search=${encodeURIComponent(currentSearch)}&sort=${currentSort}&direction=${currentDirection}&page=${currentPage}&limit=${currentLimit}&excelFile=${encodeURIComponent(currentExcelFile)}&facultyName=${encodeURIComponent(currentFaculty)}`;
       window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
     }
   } catch (error) {
@@ -290,6 +316,70 @@ function initContactActions() {
     }
   });
 
+  // Delete All Action Trigger
+  document.addEventListener('click', (e) => {
+    const deleteAllBtn = e.target.closest('#delete-all-btn');
+    if (!deleteAllBtn) return;
+
+    const promptTextEl = document.getElementById('delete-all-prompt-text');
+    if (promptTextEl) {
+      if (!currentExcelFile) {
+        promptTextEl.innerHTML = 'Are you sure you want to permanently delete <strong>all contacts</strong> from the database?';
+      } else if (currentExcelFile === 'Manually Added') {
+        promptTextEl.innerHTML = 'Are you sure you want to permanently delete all <strong>manually added</strong> contacts?';
+      } else {
+        promptTextEl.innerHTML = `Are you sure you want to permanently delete all contacts imported from <strong>${currentExcelFile}</strong>?`;
+      }
+    }
+
+    const deleteAllModal = new bootstrap.Modal(document.getElementById('deleteAllContactsModal'));
+    deleteAllModal.show();
+  });
+
+  // Confirm delete all button handler
+  const confirmDeleteAllBtn = document.getElementById('confirm-delete-all-btn');
+  confirmDeleteAllBtn?.addEventListener('click', async () => {
+    confirmDeleteAllBtn.disabled = true;
+    const originalContent = confirmDeleteAllBtn.innerHTML;
+    confirmDeleteAllBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`;
+
+    try {
+      const response = await fetch('/contacts/delete-all', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ excelFile: currentExcelFile })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        showToast('Success', data.message || 'Contacts deleted successfully.', 'bi-trash-fill text-emerald');
+        const deleteAllModalEl = document.getElementById('deleteAllContactsModal');
+        const modalInstance = bootstrap.Modal.getInstance(deleteAllModalEl);
+        modalInstance?.hide();
+        
+        // Reset current excel filter if we cleared that specific file
+        if (currentExcelFile) {
+          currentExcelFile = '';
+        }
+        currentPage = 1;
+        fetchTableData(); // Refresh list
+      } else {
+        throw new Error(data.message || 'Delete operation failed.');
+      }
+    } catch (error) {
+      showToast('Error', error.message || 'Failed to delete contacts.', 'bi-exclamation-octagon-fill text-danger');
+      const deleteAllModalEl = document.getElementById('deleteAllContactsModal');
+      const modalInstance = bootstrap.Modal.getInstance(deleteAllModalEl);
+      modalInstance?.hide();
+    } finally {
+      confirmDeleteAllBtn.disabled = false;
+      confirmDeleteAllBtn.innerHTML = originalContent;
+    }
+  });
+
   // Manual Add Form Submission (AJAX)
   const addForm = document.getElementById('add-contact-form');
   addForm?.addEventListener('submit', async (e) => {
@@ -305,6 +395,7 @@ function initContactActions() {
     const mobileInput = document.getElementById('add-mobile');
     const companyInput = document.getElementById('add-company');
     const cityInput = document.getElementById('add-city');
+    const facultyInput = document.getElementById('add-faculty');
     const remarkInput = document.getElementById('add-remark');
     const errorBlock = document.getElementById('add-contact-error');
     const errorMsg = document.getElementById('add-contact-error-msg');
@@ -324,6 +415,7 @@ function initContactActions() {
         mobile: mobileInput.value,
         company: companyInput.value,
         city: cityInput.value,
+        facultyName: facultyInput.value,
         remark: remarkInput.value
       };
 

@@ -107,6 +107,22 @@
               <!-- 3. Display Form Upload -->
               <form action="/upload" method="POST" enctype="multipart/form-data" id="excel-upload-form">
                 
+                <!-- Faculty Selection Dropdown -->
+                <div class="mb-4">
+                  <label for="upload-faculty-selector" class="form-label text-sm text-muted-dark fw-bold">
+                    <i class="bi bi-person-badge-fill text-primary-blue me-1"></i>Select Faculty <span class="text-danger">*</span>
+                  </label>
+                  <select name="facultyName" id="upload-faculty-selector" class="form-select text-dark border-light-blue" required>
+                    <option value="" disabled selected>-- Select Faculty --</option>
+                    <option value="RAVI JASOLIYA">RAVI JASOLIYA</option>
+                    <option value="RIDHAM KEVADIYA">RIDHAM KEVADIYA</option>
+                    <option value="CHIRAG MANGUKIYA">CHIRAG MANGUKIYA</option>
+                    <option value="ABHI AANKOLIYA">ABHI AANKOLIYA</option>
+                    <option value="RAJNI SHINGALA">RAJNI SHINGALA</option>
+                  </select>
+                  <div class="text-xxs text-muted mt-1">All contacts in this Excel sheet will be assigned to the selected faculty member.</div>
+                </div>
+
                 <!-- Drag and Drop Zone -->
                 <div id="drop-zone" class="upload-drop-zone d-flex flex-column align-items-center justify-content-center p-5 border-2 border-dashed rounded-4 cursor-pointer text-center">
                   <input type="file" name="excelFile" id="excel-file-input" class="d-none" accept=".xlsx, .xls">

@@ -1,4 +1,55 @@
 <div class="card bg-card border border-slate-light shadow-sm overflow-hidden">
+  <!-- Card Header with Excel Wise Filtering -->
+  <div class="card-header bg-card border-bottom border-slate-light px-4 py-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+    <div class="d-flex align-items-center gap-2">
+      <h5 class="mb-0 fw-bold text-primary-dark">Contact Directory</h5>
+    </div>
+    
+    <!-- Filters & Delete All -->
+    <div class="d-flex flex-wrap align-items-center gap-3">
+      <!-- Faculty Filter Dropdown -->
+      <div class="d-flex align-items-center gap-2">
+        <label for="faculty-filter-selector" class="text-sm text-muted-dark text-nowrap mb-0">
+          <i class="bi bi-person-fill text-primary-blue me-1"></i>Faculty:
+        </label>
+        <select id="faculty-filter-selector" class="form-select form-select-sm bg-light border-slate-light text-dark rounded-pill px-3" style="min-width: 200px;">
+          <option value="" <%= !selectedFaculty ? 'selected' : '' %>>All Faculties</option>
+          <option value="RAVI JASOLIYA" <%= selectedFaculty === 'RAVI JASOLIYA' ? 'selected' : '' %>>RAVI JASOLIYA</option>
+          <option value="RIDHAM KEVADIYA" <%= selectedFaculty === 'RIDHAM KEVADIYA' ? 'selected' : '' %>>RIDHAM KEVADIYA</option>
+          <option value="CHIRAG MANGUKIYA" <%= selectedFaculty === 'CHIRAG MANGUKIYA' ? 'selected' : '' %>>CHIRAG MANGUKIYA</option>
+          <option value="ABHI AANKOLIYA" <%= selectedFaculty === 'ABHI AANKOLIYA' ? 'selected' : '' %>>ABHI AANKOLIYA</option>
+          <option value="RAJNI SHINGALA" <%= selectedFaculty === 'RAJNI SHINGALA' ? 'selected' : '' %>>RAJNI SHINGALA</option>
+          <option value="Unassigned" <%= selectedFaculty === 'Unassigned' ? 'selected' : '' %>>Unassigned / None</option>
+        </select>
+      </div>
+
+      <!-- Excel File Filter Dropdown -->
+      <div class="d-flex align-items-center gap-2">
+        <label for="excel-filter-selector" class="text-sm text-muted-dark text-nowrap mb-0">
+          <i class="bi bi-file-earmark-excel-fill text-success me-1"></i>Excel Source:
+        </label>
+        <select id="excel-filter-selector" class="form-select form-select-sm bg-light border-slate-light text-dark rounded-pill px-3" style="min-width: 200px;">
+          <option value="" <%= !selectedExcelFile ? 'selected' : '' %>>All Sources</option>
+          <option value="Manually Added" <%= selectedExcelFile === 'Manually Added' ? 'selected' : '' %>>Manually Added</option>
+          <% excelFiles.forEach(file => { %>
+            <option value="<%= file %>" <%= selectedExcelFile === file ? 'selected' : '' %>><%= file %></option>
+          <% }) %>
+        </select>
+      </div>
+      <% if (totalContacts > 0) { %>
+        <button 
+          type="button" 
+          id="delete-all-btn" 
+          class="btn btn-outline-danger btn-sm rounded-pill d-flex align-items-center gap-1.5 px-3"
+          title="Delete All Contacts"
+        >
+          <i class="bi bi-trash3-fill"></i>
+          <span>Delete All</span>
+        </button>
+      <% } %>
+    </div>
+  </div>
+
   <div class="table-responsive">
     <table class="table table-dark-custom align-middle mb-0">
       <thead>
@@ -14,7 +65,7 @@
               <% } %>
             </div>
           </th>
-          <th style="width: 150px;" class="text-end pe-4 text-muted-dark">Action</th>
+          <th style="width: 180px;" class="text-end pe-4 text-muted-dark">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -28,20 +79,39 @@
               <td>
                 <div class="fw-bold text-dark d-flex align-items-center gap-2">
                   <span class="avatar-circle"><%= contact.name.charAt(0).toUpperCase() %></span>
-                  <span><%= contact.name %></span>
+                  <div>
+                    <div><%= contact.name %></div>
+                    <% if (contact.facultyName) { %>
+                      <div class="text-xxs text-muted-dark fw-bold uppercase mt-0.5" style="letter-spacing: 0.02em;">
+                        <i class="bi bi-person-fill text-primary-blue me-0.5"></i><%= contact.facultyName %>
+                      </div>
+                    <% } %>
+                  </div>
                 </div>
               </td>
               <td class="text-end pe-4">
-                <!-- Call Button -->
-                <button 
-                  type="button" 
-                  class="btn btn-primary-blue btn-sm rounded-pill btn-call px-4 d-inline-flex align-items-center gap-1.5" 
-                  data-id="<%= contact._id %>" 
-                  data-mobile="<%= contact.mobile %>"
-                >
-                  <i class="bi bi-telephone-fill text-white"></i>
-                  <span>Call</span>
-                </button>
+                <div class="d-inline-flex gap-1.5 align-items-center justify-content-end">
+                  <!-- Call Button -->
+                  <button 
+                    type="button" 
+                    class="btn btn-primary-blue btn-sm rounded-pill btn-call px-4 d-inline-flex align-items-center gap-1.5" 
+                    data-id="<%= contact._id %>" 
+                    data-mobile="<%= contact.mobile %>"
+                  >
+                    <i class="bi bi-telephone-fill text-white"></i>
+                    <span>Call</span>
+                  </button>
+                  <!-- Delete Button -->
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-danger btn-sm rounded-circle btn-icon btn-delete" 
+                    data-id="<%= contact._id %>" 
+                    data-name="<%= contact.name %>"
+                    title="Delete Contact"
+                  >
+                    <i class="bi bi-trash-fill text-danger"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           <% }) %>

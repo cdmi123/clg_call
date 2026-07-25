@@ -34,6 +34,16 @@ const contactSchema = new mongoose.Schema({
   lastCallDate: {
     type: Date,
     default: null
+  },
+  excelFileName: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  facultyName: {
+    type: String,
+    default: '',
+    trim: true
   }
 }, {
   timestamps: true // Automatically manages createdAt and updatedAt fields

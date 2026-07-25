@@ -20,7 +20,7 @@ const getCellValue = (cell) => {
 exports.renderDashboard = async (req, res, next) => {
   try {
     const search = req.query.search || '';
-    const sort = req.query.sort || 'name';
+    const sort = req.query.sort || 'createdAt';
     const direction = req.query.direction || 'asc';
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -28,21 +28,65 @@ exports.renderDashboard = async (req, res, next) => {
 
     // Filter build
     let query = {};
+    const conditions = [];
+
+    // Search filter
     if (search.trim()) {
       const searchRegex = new RegExp(search.trim(), 'i');
-      query = {
+      conditions.push({
         $or: [
           { name: searchRegex },
           { mobile: searchRegex },
           { company: searchRegex },
           { city: searchRegex }
         ]
-      };
+      });
+    }
+
+    // Excel source filter
+    const excelFile = req.query.excelFile || '';
+    if (excelFile.trim()) {
+      if (excelFile === 'Manually Added') {
+        conditions.push({
+          $or: [
+            { excelFileName: 'Manually Added' },
+            { excelFileName: '' },
+            { excelFileName: { $exists: false } },
+            { excelFileName: null }
+          ]
+        });
+      } else {
+        conditions.push({ excelFileName: excelFile.trim() });
+      }
+    }
+
+    // Faculty filter
+    const facultyName = req.query.facultyName || '';
+    if (facultyName.trim()) {
+      if (facultyName === 'Unassigned') {
+        conditions.push({
+          $or: [
+            { facultyName: '' },
+            { facultyName: { $exists: false } },
+            { facultyName: null }
+          ]
+        });
+      } else {
+        conditions.push({ facultyName: facultyName.trim() });
+      }
+    }
+
+    if (conditions.length > 0) {
+      query = { $and: conditions };
     }
 
     // Sort build
     const sortDir = direction === 'desc' ? -1 : 1;
     const sortObj = { [sort]: sortDir };
+
+    // Fetch unique excel file names for filtering
+    const allFiles = await Contact.distinct('excelFileName');
+    const excelFiles = allFiles.filter(f => f && f !== 'Manually Added' && f.trim() !== '').sort();
 
     // Queries
     const totalContacts = await Contact.countDocuments(query);
@@ -65,7 +109,10 @@ exports.renderDashboard = async (req, res, next) => {
         totalPages,
         sort,
         direction,
-        search
+        search,
+        excelFiles,
+        selectedExcelFile: excelFile,
+        selectedFaculty: facultyName
       }, (err, html) => {
         if (err) return next(err);
         res.json({
@@ -90,6 +137,9 @@ exports.renderDashboard = async (req, res, next) => {
       sort,
       direction,
       search,
+      excelFiles,
+      selectedExcelFile: excelFile,
+      selectedFaculty: facultyName,
       title: 'Dashboard | Call Management System'
     });
   } catch (error) {
@@ -119,6 +169,7 @@ exports.renderUpload = async (req, res, next) => {
  */
 exports.uploadExcel = async (req, res, next) => {
   const file = req.file;
+  const facultyName = req.body.facultyName || '';
   if (!file) {
     return res.render('upload', {
       title: 'Import Contacts | Call Management System',
@@ -203,7 +254,7 @@ exports.uploadExcel = async (req, res, next) => {
       }
       seenMobilesInFile.add(mobile);
 
-      contactsToInsert.push({ name, mobile, company, city, remark });
+      contactsToInsert.push({ name, mobile, company, city, remark, excelFileName: file.originalname, facultyName });
     });
 
     // Check duplicates against existing database records
@@ -269,7 +320,7 @@ exports.uploadExcel = async (req, res, next) => {
  */
 exports.addContact = async (req, res) => {
   try {
-    const { name, mobile, company, city, remark } = req.body;
+    const { name, mobile, company, city, remark, facultyName } = req.body;
 
     if (!name || !mobile) {
       return res.status(400).json({ success: false, message: 'Name and Mobile Number are required.' });
@@ -289,7 +340,9 @@ exports.addContact = async (req, res) => {
       mobile: cleanMobile,
       company: company ? company.trim() : '',
       city: city ? city.trim() : '',
-      remark: remark ? remark.trim() : ''
+      remark: remark ? remark.trim() : '',
+      excelFileName: 'Manually Added',
+      facultyName: facultyName ? facultyName.trim() : ''
     });
 
     await newContact.save();
@@ -324,7 +377,7 @@ exports.renderEdit = async (req, res, next) => {
  */
 exports.updateContact = async (req, res, next) => {
   try {
-    const { name, mobile, company, city, remark } = req.body;
+    const { name, mobile, company, city, remark, facultyName } = req.body;
     const contactId = req.params.id;
 
     if (!name || !mobile) {
@@ -344,7 +397,8 @@ exports.updateContact = async (req, res, next) => {
       mobile: cleanMobile,
       company: company ? company.trim() : '',
       city: city ? city.trim() : '',
-      remark: remark ? remark.trim() : ''
+      remark: remark ? remark.trim() : '',
+      facultyName: facultyName ? facultyName.trim() : ''
     });
 
     res.redirect('/');
@@ -379,6 +433,42 @@ exports.deleteContact = async (req, res) => {
       return res.status(500).json({ success: false, message: error.message });
     }
     res.redirect('/');
+  }
+};
+
+/**
+ * Delete all contacts or contacts matching an excel file filter
+ */
+exports.deleteAllContacts = async (req, res) => {
+  try {
+    const { excelFile } = req.body;
+    let query = {};
+
+    if (excelFile && excelFile.trim()) {
+      if (excelFile === 'Manually Added') {
+        query = {
+          $or: [
+            { excelFileName: 'Manually Added' },
+            { excelFileName: '' },
+            { excelFileName: { $exists: false } },
+            { excelFileName: null }
+          ]
+        };
+      } else {
+        query = { excelFileName: excelFile.trim() };
+      }
+    }
+
+    const result = await Contact.deleteMany(query);
+    return res.json({ 
+      success: true, 
+      message: `Successfully deleted ${result.deletedCount} contacts.` 
+    });
+  } catch (error) {
+    return res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Failed to delete contacts.' 
+    });
   }
 };
 
